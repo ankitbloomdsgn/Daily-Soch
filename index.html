@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Daily Soch App</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- PWA Meta Tags -->
+<meta name="description" content="Daily Soch - Your daily dose of wisdom through engaging stories and quizzes">
+<meta name="theme-color" content="#10b981">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daily Soch">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Soch 🌱 | आज का विचार</title>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Header -->
+        <header class="header">
+            <h1>🌱 Daily Soch</h1>
+            <div class="subtitle">आज का विचार • Your Daily Dose of Wisdom</div>
+            <div class="soch-counter-badge">
+                Soch <span id="soch-counter">1 of 10</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div id="content">
+            
+            <article class="card">
+                
+                <!-- Category Badge -->
+                <span id="category" class="badge">📚 Loading...</span>
+                
+                <!-- Title -->
+                <h2 id="title">Loading...</h2>
+                
+                <!-- Meta Info -->
+                <div class="meta">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>1 min read</span>
+                </div>
+                
+                <!-- Story -->
+                <div id="story" class="story">
+                    <p>Loading story...</p>
+                </div>
+                
+                <!-- Takeaway -->
+                <div class="takeaway">
+                    <div class="takeaway-label">💡 KEY TAKEAWAY</div>
+                    <div id="takeaway" class="takeaway-text">Loading...</div>
+                </div>
+                
+                <!-- Quiz -->
+                <div class="quiz">
+                    <div class="quiz-header">🤔 Test Your Understanding</div>
+                    <div id="question" class="quiz-question">Loading question...</div>
+                    <div id="options"></div>
+                    <div id="feedback" class="feedback"></div>
+                </div>
+                
+            </article>
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons">
+                <button class="nav-btn" onclick="previousSoch()">
+                    <span class="btn-icon">⬅️</span>
+                    <span>Previous</span>
+                </button>
+                <button class="nav-btn" onclick="nextSoch()">
+                    <span>Next</span>
+                    <span class="btn-icon">➡️</span>
+                </button>
+            </div>
+            
+            <!-- Action Buttons -->
+            <button class="btn" onclick="share()">
+                <span>📤</span>
+                <span>Share This Soch</span>
+            </button>
+            
+            <button class="btn btn-secondary" onclick="randomSoch()">
+                <span>🎲</span>
+                <span>Random Soch</span>
+            </button>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🙏 Made with ❤️ for curious minds</p>
+            <p style="font-size: 0.85em; margin-top: 5px;">Har din kuch naya seekho</p>
+        </footer>
+
+    </div>
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
