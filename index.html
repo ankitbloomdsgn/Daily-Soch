@@ -11,7 +11,7 @@
     <meta name="theme-color" content="#10b981">
 </head>
 <body>
-    <!-- Category Selection Screen -->
+    <!-- Category Selection Screen (Full Screen Overlay) -->
     <div id="categoryScreen" class="category-screen">
         <div class="category-content">
             <h1>🌱 Welcome to Daily Soch</h1>
@@ -20,7 +20,7 @@
             <p class="instruction">Select 3-7 categories to personalize your experience</p>
             
             <div id="categoryGrid" class="category-grid">
-                <!-- Categories will be loaded here by JavaScript -->
+                <!-- Categories loaded by JavaScript -->
             </div>
             
             <div class="selection-info">
@@ -30,14 +30,15 @@
         </div>
     </div>
 
-    <!-- Settings Button (appears after onboarding) -->
+    <!-- Settings Button (Top Right) -->
     <button id="settingsBtn" class="settings-btn" style="display: none;">⚙️</button>
 
+    <!-- Main App Container -->
     <div class="container">
         <header>
             <div class="logo">🌱 Daily Soch</div>
             <p class="tagline">आज का विचार • Your Daily Dose of Wisdom</p>
-            <div id="soch-counter" class="soch-counter">Soch 1 of 60</div>
+            <div id="soch-counter" class="soch-counter">Loading...</div>
         </header>
 
         <main>
