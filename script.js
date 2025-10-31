@@ -38,55 +38,55 @@ window.addEventListener('DOMContentLoaded', init);
 
 function init() {
     loadAllSochs();
-    
+
     // Check if user has completed onboarding
     const savedName = localStorage.getItem('userName');
     const savedCategories = localStorage.getItem('selectedCategories');
-    
+
     if (savedName && savedCategories) {
         userName = savedName;
         selectedCategories = JSON.parse(savedCategories);
         document.getElementById('hamburgerBtn').style.display = 'flex';
     }
-    
+
     // Name input listener
     const nameInput = document.getElementById('userName');
     const continueBtn = document.getElementById('continueBtn');
-    
+
     if (nameInput) {
         nameInput.addEventListener('input', (e) => {
             const value = e.target.value.trim();
             continueBtn.disabled = value.length < 2;
         });
-        
+
         nameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !continueBtn.disabled) {
                 proceedToCategories();
             }
         });
     }
-    
+
     if (continueBtn) {
         continueBtn.addEventListener('click', proceedToCategories);
     }
-    
+
     // Hamburger menu
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const sideMenu = document.getElementById('sideMenu');
     const closeMenuBtn = document.getElementById('closeMenuBtn');
-    
+
     if (hamburgerBtn) {
         hamburgerBtn.addEventListener('click', () => {
             sideMenu.classList.add('open');
         });
     }
-    
+
     if (closeMenuBtn) {
         closeMenuBtn.addEventListener('click', () => {
             sideMenu.classList.remove('open');
         });
     }
-    
+
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (sideMenu && sideMenu.classList.contains('open')) {
@@ -103,8 +103,8 @@ async function loadAllSochs() {
         const response = await fetch(url);
         const text = await response.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-        
-        allSochsallSochs = json.table.rows.filter(row => row.c[1]?.v).map((row, index) => ({
+
+        allSochs = json.table.rows.filter(row => row.c[1]?.v).map((row, index) => ({
             id: row.c[0]?.v || (index + 1),
             title: row.c[1]?.v || '',
             category: row.c[2]?.v || 'General',
@@ -112,13 +112,12 @@ async function loadAllSochs() {
             takeaway: row.c[4]?.v || '',
             quizQuestion: row.c[5]?.v || '',
             quizOptions: row.c[6]?.v || '',
-            quizAnswer: row.c[7]?.v || '',
-            bonusTip: row.c[8]?.v || ''
+            quizAnswer: row.c[7]?.v || ''
         }));
-        
+
         const savedName = localStorage.getItem('userName');
         const savedCategories = localStorage.getItem('selectedCategories');
-        
+
         if (!savedName) {
             // Show name collection screen
             showNameScreen();
@@ -147,12 +146,12 @@ function showNameScreen() {
 function proceedToCategories() {
     const nameInput = document.getElementById('userName');
     userName = nameInput.value.trim();
-    
+
     if (userName.length < 2) return;
-    
+
     localStorage.setItem('userName', userName);
     document.getElementById('nameScreen').classList.remove('show');
-    
+
     showCategoryScreen();
     loadCategoryGrid();
 }
@@ -167,9 +166,9 @@ function showCategoryScreen() {
 
 function loadCategoryGrid() {
     allCategories = [...new Set(allSochs.map(s => s.category))].sort();
-    
+
     renderCategories();
-    
+
     const saveBtn = document.getElementById('saveCategoriesBtn');
     if (saveBtn && !saveBtn.hasAttribute('data-listener')) {
         saveBtn.addEventListener('click', saveCategories);
@@ -179,7 +178,7 @@ function loadCategoryGrid() {
 
 function renderCategories() {
     const grid = document.getElementById('categoryGrid');
-    
+
     // Show ALL categories at once
     grid.innerHTML = allCategories.map(cat => {
         const emoji = categoryEmojis[cat] || '📚';
@@ -191,17 +190,17 @@ function renderCategories() {
             </div>
         `;
     }).join('');
-    
+
     document.querySelectorAll('.category-option').forEach(option => {
         option.addEventListener('click', () => toggleCategory(option));
     });
-    
+
     updateSelectedCount();
 }
 
 function toggleCategory(element) {
     const category = element.dataset.category;
-    
+
     if (element.classList.contains('selected')) {
         element.classList.remove('selected');
         selectedCategories = selectedCategories.filter(c => c !== category);
@@ -209,7 +208,7 @@ function toggleCategory(element) {
         element.classList.add('selected');
         selectedCategories.push(category);
     }
-    
+
     updateSelectedCount();
 }
 
@@ -219,7 +218,7 @@ function updateSelectedCount() {
     const btn = document.getElementById('saveCategoriesBtn');
     const MIN_CATEGORIES = 3;
     const MAX_CATEGORIES = 7;
-    
+
     if (count === 0) {
         countEl.textContent = `Select ${MIN_CATEGORIES}-${MAX_CATEGORIES} categories`;
         countEl.style.color = '#6b7280';
@@ -242,13 +241,13 @@ function updateSelectedCount() {
 function saveCategories() {
     const MIN_CATEGORIES = 3;
     const MAX_CATEGORIES = 7;
-    
+
     if (selectedCategories.length < MIN_CATEGORIES || selectedCategories.length > MAX_CATEGORIES) return;
-    
+
     localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
     document.getElementById('categoryScreen').classList.remove('show');
     document.getElementById('hamburgerBtn').style.display = 'flex';
-    
+
     filterSochsByCategories();
     showMainApp();
 }
@@ -265,21 +264,21 @@ function filterSochsByCategories() {
 
 function showMainApp() {
     document.getElementById('mainApp').style.display = 'block';
-    
+
     // Update greeting
     const greeting = document.getElementById('userGreeting');
     greeting.textContent = `Namaste, ${userName}! 🙏`;
-    
+
     if (filteredSochs.length === 0) {
         document.getElementById('story').innerHTML = `<p style="color:red;">No Sochs found for your selected categories. Try selecting more categories!</p>`;
         return;
     }
-    
+
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
     const dayOfYear = Math.floor((now - start) / 86400000);
     currentIndex = dayOfYear % filteredSochs.length;
-    
+
     showSoch(currentIndex);
 }
 
@@ -297,20 +296,20 @@ function updateCounter() {
 
 function displaySoch() {
     if (!currentSoch) return;
-    
+
     const emoji = categoryEmojis[currentSoch.category] || '📚';
     document.getElementById('category').textContent = `${emoji} ${currentSoch.category}`;
     document.getElementById('title').textContent = currentSoch.title;
-    
+
     const paragraphs = currentSoch.story.split('\n\n');
     document.getElementById('story').innerHTML = paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
-    
+
     document.getElementById('takeaway').textContent = currentSoch.takeaway;
     document.getElementById('question').textContent = currentSoch.quizQuestion;
-    
+
     const optionsDiv = document.getElementById('options');
     optionsDiv.innerHTML = '';
-    
+
     currentSoch.quizOptions.split('|').forEach(option => {
         const div = document.createElement('div');
         div.className = 'option';
@@ -320,61 +319,34 @@ function displaySoch() {
         div.onclick = () => checkAnswer(letter, div);
         optionsDiv.appendChild(div);
     });
-    
+
     document.getElementById('feedback').className = 'feedback';
 }
 
 function checkAnswer(selected, element) {
     if (answered) return;
     answered = true;
-    
+
     const feedback = document.getElementById('feedback');
     const allOptions = document.querySelectorAll('.option');
     allOptions.forEach(opt => opt.style.pointerEvents = 'none');
-    
+
     if (selected === currentSoch.quizAnswer) {
-        // ✅ CORRECT ANSWER!
+        // Correct answer!
         element.classList.add('correct');
         
         // 🎉 CONFETTI CELEBRATION!
         triggerConfetti(element);
         
-        // Build feedback with bonus tip
         feedback.className = 'feedback show correct';
-        feedback.innerHTML = `
-            <div class="feedback-message">✅ Bahut badiya! Sahi jawab!</div>
-            ${currentSoch.bonusTip ? `
-                <div class="bonus-tip">
-                    <div class="bonus-tip-header">🎁 Bonus Insight!</div>
-                    <div class="bonus-tip-text">${currentSoch.bonusTip}</div>
-                </div>
-            ` : ''}
-        `;
+        feedback.textContent = '✅ Bahut badiya! Sahi jawab!';
     } else {
-        // ❌ WRONG ANSWER
+        // Wrong answer
         element.classList.add('wrong');
-        
-        // Show correct answer in green
-        allOptions.forEach(opt => {
-            if (opt.querySelector('.option-letter').textContent === currentSoch.quizAnswer) {
-                opt.classList.add('correct');
-            }
-        });
-        
-        // Build feedback with bonus tip
         feedback.className = 'feedback show wrong';
-        feedback.innerHTML = `
-            <div class="feedback-message">❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}</div>
-            ${currentSoch.bonusTip ? `
-                <div class="bonus-tip">
-                    <div class="bonus-tip-header">💡 Did You Know?</div>
-                    <div class="bonus-tip-text">${currentSoch.bonusTip}</div>
-                    <div class="bonus-tip-encouragement">💪 Keep learning! Every mistake makes you smarter!</div>
-                </div>
-            ` : ''}
-        `;
+        feedback.textContent = `❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}`;
+@@ -347,90 +353,128 @@
     }
-}
 }
 
 // 🎉 Confetti Function
@@ -460,7 +432,7 @@ function openCategorySelection() {
 
 function editName() {
     document.getElementById('sideMenu').classList.remove('open');
-    
+
     const newName = prompt('What should we call you?', userName);
     if (newName && newName.trim().length >= 2) {
         userName = newName.trim();
@@ -481,9 +453,9 @@ function closeAbout() {
 
 function shareApp() {
     document.getElementById('sideMenu').classList.remove('open');
-    
+
     const shareText = `📱 Daily Soch - Your daily dose of wisdom!\n\nNo fluff. No BS. Just 1-minute case studies.\n\nCheck it out: ${window.location.href}`;
-    
+
     if (navigator.share) {
         navigator.share({
             title: 'Daily Soch',
@@ -502,4 +474,3 @@ document.addEventListener('click', (e) => {
     if (modal && e.target === modal) {
         closeAbout();
     }
-});
