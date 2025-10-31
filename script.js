@@ -2,9 +2,11 @@ const SHEET_ID = '17lLI7iWHeidBK7yyhG8rugXfNj8sxCq-zviBIMzTu2E';
 const SHEET_NAME = 'sheet1';
 
 let allSochs = [];
+let filteredSochs = [];
 let currentSoch = null;
 let currentIndex = 0;
 let answered = false;
+let selectedCategories = [];
 
 const categoryEmojis = {
     'Science': '🔬',
@@ -12,11 +14,36 @@ const categoryEmojis = {
     'Culture': '🎭',
     'Finance': '💰',
     'Tech': '💻',
+    'Technology': '💻',
     'Brands': '🏢',
-    'Mindset': '🧠'
+    'Mindset': '🧠',
+    'Health': '🏥',
+    'Psychology': '🧠',
+    'History': '📜',
+    'Food': '🍜',
+    'Travel': '✈️',
+    'Books': '📚',
+    'Sports': '⚽',
+    'Nature': '🌿',
+    'Philosophy': '💭',
+    'Career': '💼',
+    'Productivity': '⚡',
+    'Relationships': '💝',
+    'Environment': '🌍'
 };
 
-window.addEventListener('DOMContentLoaded', loadAllSochs);
+window.addEventListener('DOMContentLoaded', init);
+
+function init() {
+    loadAllSochs();
+    
+    // Check if user has already selected categories
+    const saved = localStorage.getItem('selectedCategories');
+    if (saved) {
+        selectedCategories = JSON.parse(saved);
+        document.getElementById('settingsBtn').style.display = 'flex';
+    }
+}
 
 async function loadAllSochs() {
     try {
@@ -25,8 +52,7 @@ async function loadAllSochs() {
         const text = await response.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
         
-        const rows = json.table.rows.filter(row => row.c[1]?.v);
-        allSochs = rows.map((row, index) => ({
+        allSochs = json.table.rows.filter(row => row.c[1]?.v).map((row, index) => ({
             id: row.c[0]?.v || (index + 1),
             title: row.c[1]?.v || '',
             category: row.c[2]?.v || 'General',
@@ -37,27 +63,144 @@ async function loadAllSochs() {
             quizAnswer: row.c[7]?.v || ''
         }));
         
-        const now = new Date();
-        const start = new Date(now.getFullYear(), 0, 0);
-        const dayOfYear = Math.floor((now - start) / 86400000);
-        currentIndex = dayOfYear % allSochs.length;
-        
-        showSoch(currentIndex);
+        const saved = localStorage.getItem('selectedCategories');
+        if (!saved) {
+            // First time user - show category selection
+            showCategoryScreen();
+            loadCategoryGrid();
+        } else {
+            // Returning user - show daily soch
+            filterSochsByCategories();
+            showDailySoch();
+        }
     } catch (error) {
         document.getElementById('story').innerHTML = `<p style="color:red;">Error loading data: ${error.message}</p>`;
     }
 }
 
+function showCategoryScreen() {
+    document.getElementById('categoryScreen').classList.add('show');
+}
+
+function loadCategoryGrid() {
+    // Get unique categories from all sochs
+    const categories = [...new Set(allSochs.map(s => s.category))].sort();
+    
+    const grid = document.getElementById('categoryGrid');
+    grid.innerHTML = categories.map(cat => {
+        const emoji = categoryEmojis[cat] || '📚';
+        return `
+            <div class="category-option" data-category="${cat}">
+                <div class="emoji">${emoji}</div>
+                <div class="name">${cat}</div>
+            </div>
+        `;
+    }).join('');
+    
+    // Add click listeners
+    document.querySelectorAll('.category-option').forEach(option => {
+        option.addEventListener('click', () => toggleCategory(option));
+    });
+    
+    document.getElementById('saveCategoriesBtn').addEventListener('click', saveCategories);
+}
+
+function toggleCategory(element) {
+    const category = element.dataset.category;
+    
+    if (element.classList.contains('selected')) {
+        element.classList.remove('selected');
+        selectedCategories = selectedCategories.filter(c => c !== category);
+    } else {
+        element.classList.add('selected');
+        selectedCategories.push(category);
+    }
+    
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    const count = selectedCategories.length;
+    const countEl = document.getElementById('selectedCount');
+    const btn = document.getElementById('saveCategoriesBtn');
+    
+    if (count === 0) {
+        countEl.textContent = 'Select at least 3 categories';
+        btn.disabled = true;
+    } else if (count < 3) {
+        countEl.textContent = `Selected ${count} - pick ${3 - count} more`;
+        btn.disabled = true;
+    } else {
+        countEl.textContent = `✓ ${count} categories selected`;
+        btn.disabled = false;
+    }
+}
+
+function saveCategories() {
+    if (selectedCategories.length < 3) return;
+    
+    localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
+    document.getElementById('categoryScreen').classList.remove('show');
+    document.getElementById('settingsBtn').style.display = 'flex';
+    
+    filterSochsByCategories();
+    showDailySoch();
+}
+
+function filterSochsByCategories() {
+    if (selectedCategories.length === 0) {
+        filteredSochs = allSochs;
+    } else {
+        filteredSochs = allSochs.filter(soch => 
+            selectedCategories.includes(soch.category)
+        );
+    }
+}
+
+function showDailySoch() {
+    if (filteredSochs.length === 0) {
+        document.getElementById('story').innerHTML = `<p style="color:red;">No Sochs found for your selected categories. Try selecting more categories!</p>`;
+        return;
+    }
+    
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - start) / 86400000);
+    currentIndex = dayOfYear % filteredSochs.length;
+    
+    showSoch(currentIndex);
+}
+
+// Settings button to change categories
+document.addEventListener('DOMContentLoaded', () => {
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            showCategoryScreen();
+            loadCategoryGrid();
+            
+            // Pre-select current categories
+            setTimeout(() => {
+                selectedCategories.forEach(cat => {
+                    const option = document.querySelector(`[data-category="${cat}"]`);
+                    if (option) option.classList.add('selected');
+                });
+                updateSelectedCount();
+            }, 100);
+        });
+    }
+});
+
 function showSoch(index) {
     currentIndex = index;
-    currentSoch = allSochs[index];
+    currentSoch = filteredSochs[index];
     answered = false;
     displaySoch();
     updateCounter();
 }
 
 function updateCounter() {
-    document.getElementById('soch-counter').textContent = `${currentIndex + 1} of ${allSochs.length}`;
+    document.getElementById('soch-counter').textContent = `${currentIndex + 1} of ${filteredSochs.length}`;
 }
 
 function displaySoch() {
@@ -114,22 +257,22 @@ function checkAnswer(selected, element) {
 }
 
 function nextSoch() {
-    if (allSochs.length === 0) return;
-    currentIndex = currentIndex < allSochs.length - 1 ? currentIndex + 1 : 0;
+    if (filteredSochs.length === 0) return;
+    currentIndex = currentIndex < filteredSochs.length - 1 ? currentIndex + 1 : 0;
     showSoch(currentIndex);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function previousSoch() {
-    if (allSochs.length === 0) return;
-    currentIndex = currentIndex > 0 ? currentIndex - 1 : allSochs.length - 1;
+    if (filteredSochs.length === 0) return;
+    currentIndex = currentIndex > 0 ? currentIndex - 1 : filteredSochs.length - 1;
     showSoch(currentIndex);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function randomSoch() {
-    if (allSochs.length === 0) return;
-    showSoch(Math.floor(Math.random() * allSochs.length));
+    if (filteredSochs.length === 0) return;
+    showSoch(Math.floor(Math.random() * filteredSochs.length));
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
