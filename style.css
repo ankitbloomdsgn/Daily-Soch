@@ -1133,11 +1133,16 @@ footer p {
     }
 
     .onboarding-content h1 {
-        font-size: 23px;
+        font-size: 22px;
         margin-bottom: 12px;
-        line-height: 1.3;
+        line-height: 1.4;
         word-wrap: break-word;
+        word-break: break-word;
         text-align: center;
+        padding: 0 10px;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 
     .onboarding-content .subtitle {
@@ -1273,6 +1278,19 @@ footer p {
     }
 }
 
+/* Fix for category greeting on mobile */
+@media (max-width: 640px) {
+    #categoryGreeting {
+        font-size: 20px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 10px !important;
+        padding: 0 5px !important;
+        word-break: break-word !important;
+        display: block !important;
+        white-space: normal !important;
+    }
+}
+
 /* Extra Small Phones */
 @media (max-width: 375px) {
     body {
@@ -1304,7 +1322,12 @@ footer p {
     }
 
     .onboarding-content h1 {
-        font-size: 24px;
+        font-size: 20px;
+    }
+
+    #categoryGreeting {
+        font-size: 18px !important;
+        line-height: 1.3 !important;
     }
 
     .category-grid {
