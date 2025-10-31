@@ -332,10 +332,16 @@ function checkAnswer(selected, element) {
     allOptions.forEach(opt => opt.style.pointerEvents = 'none');
     
     if (selected === currentSoch.quizAnswer) {
+        // Correct answer!
         element.classList.add('correct');
+        
+        // 🎉 CONFETTI CELEBRATION!
+        triggerConfetti(element);
+        
         feedback.className = 'feedback show correct';
         feedback.textContent = '✅ Bahut badiya! Sahi jawab!';
     } else {
+        // Wrong answer
         element.classList.add('wrong');
         feedback.className = 'feedback show wrong';
         feedback.textContent = `❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}`;
@@ -345,6 +351,44 @@ function checkAnswer(selected, element) {
             }
         });
     }
+}
+
+// 🎉 Confetti Function
+function triggerConfetti(element) {
+    // Get button position for confetti origin
+    const rect = element.getBoundingClientRect();
+    const x = (rect.left + rect.width / 2) / window.innerWidth;
+    const y = (rect.top + rect.height / 2) / window.innerHeight;
+    
+    // First burst - from the button
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x, y },
+        colors: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#fbbf24', '#f59e0b']
+    });
+    
+    // Second burst - delayed slightly
+    setTimeout(() => {
+        confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x, y },
+            colors: ['#10b981', '#34d399', '#6ee7b7']
+        });
+    }, 150);
+    
+    // Third burst - from other side
+    setTimeout(() => {
+        confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x, y },
+            colors: ['#fbbf24', '#f59e0b', '#fb923c']
+        });
+    }, 300);
 }
 
 function nextSoch() {
