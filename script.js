@@ -31,63 +31,62 @@ const categoryEmojis = {
     'Career': '💼',
     'Productivity': '⚡',
     'Relationships': '💝',
-    'Environment': '🌍'
+    'Environment': '🌍',
+    'Business': '💼',
+    'Innovation': '💡',
+    'Marketing': '📱'
 };
 
 window.addEventListener('DOMContentLoaded', init);
 
 function init() {
     loadAllSochs();
-
-    // Check if user has completed onboarding
+    
     const savedName = localStorage.getItem('userName');
     const savedCategories = localStorage.getItem('selectedCategories');
-
+    
     if (savedName && savedCategories) {
         userName = savedName;
         selectedCategories = JSON.parse(savedCategories);
         document.getElementById('hamburgerBtn').style.display = 'flex';
     }
-
-    // Name input listener
+    
     const nameInput = document.getElementById('userName');
     const continueBtn = document.getElementById('continueBtn');
-
+    
     if (nameInput) {
         nameInput.addEventListener('input', (e) => {
             const value = e.target.value.trim();
             continueBtn.disabled = value.length < 2;
         });
-
+        
         nameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !continueBtn.disabled) {
                 proceedToCategories();
             }
         });
     }
-
+    
     if (continueBtn) {
         continueBtn.addEventListener('click', proceedToCategories);
     }
-
-    // Hamburger menu
+    
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const sideMenu = document.getElementById('sideMenu');
     const closeMenuBtn = document.getElementById('closeMenuBtn');
-
+    
     if (hamburgerBtn) {
         hamburgerBtn.addEventListener('click', () => {
             sideMenu.classList.add('open');
         });
     }
-
+    
     if (closeMenuBtn) {
         closeMenuBtn.addEventListener('click', () => {
             sideMenu.classList.remove('open');
         });
     }
-
-    // Close menu when clicking outside
+    
     document.addEventListener('click', (e) => {
         if (sideMenu && sideMenu.classList.contains('open')) {
             if (!sideMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
@@ -103,7 +102,7 @@ async function loadAllSochs() {
         const response = await fetch(url);
         const text = await response.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
-
+        
         allSochs = json.table.rows.filter(row => row.c[1]?.v).map((row, index) => ({
             id: row.c[0]?.v || (index + 1),
             title: row.c[1]?.v || '',
@@ -112,22 +111,23 @@ async function loadAllSochs() {
             takeaway: row.c[4]?.v || '',
             quizQuestion: row.c[5]?.v || '',
             quizOptions: row.c[6]?.v || '',
-            quizAnswer: row.c[7]?.v || ''
+            quizAnswer: row.c[7]?.v || '',
+            bonusTip: row.c[8]?.v || ''
         }));
-
+        
+        console.log('Loaded sochs:', allSochs.length);
+        console.log('Sample bonus tip:', allSochs[0]?.bonusTip);
+        
         const savedName = localStorage.getItem('userName');
         const savedCategories = localStorage.getItem('selectedCategories');
-
+        
         if (!savedName) {
-            // Show name collection screen
             showNameScreen();
         } else if (!savedCategories) {
-            // Show category selection
             userName = savedName;
             showCategoryScreen();
             loadCategoryGrid();
         } else {
-            // Show main app
             userName = savedName;
             selectedCategories = JSON.parse(savedCategories);
             filterSochsByCategories();
@@ -135,7 +135,10 @@ async function loadAllSochs() {
         }
     } catch (error) {
         console.error('Error loading data:', error);
-        document.getElementById('story').innerHTML = `<p style="color:red;">Error loading data: ${error.message}</p>`;
+        const storyEl = document.getElementById('story');
+        if (storyEl) {
+            storyEl.innerHTML = `<p style="color:red;">Error loading data: ${error.message}</p>`;
+        }
     }
 }
 
@@ -146,12 +149,12 @@ function showNameScreen() {
 function proceedToCategories() {
     const nameInput = document.getElementById('userName');
     userName = nameInput.value.trim();
-
+    
     if (userName.length < 2) return;
-
+    
     localStorage.setItem('userName', userName);
     document.getElementById('nameScreen').classList.remove('show');
-
+    
     showCategoryScreen();
     loadCategoryGrid();
 }
@@ -166,9 +169,9 @@ function showCategoryScreen() {
 
 function loadCategoryGrid() {
     allCategories = [...new Set(allSochs.map(s => s.category))].sort();
-
+    
     renderCategories();
-
+    
     const saveBtn = document.getElementById('saveCategoriesBtn');
     if (saveBtn && !saveBtn.hasAttribute('data-listener')) {
         saveBtn.addEventListener('click', saveCategories);
@@ -178,8 +181,7 @@ function loadCategoryGrid() {
 
 function renderCategories() {
     const grid = document.getElementById('categoryGrid');
-
-    // Show ALL categories at once
+    
     grid.innerHTML = allCategories.map(cat => {
         const emoji = categoryEmojis[cat] || '📚';
         const isSelected = selectedCategories.includes(cat) ? 'selected' : '';
@@ -190,17 +192,17 @@ function renderCategories() {
             </div>
         `;
     }).join('');
-
+    
     document.querySelectorAll('.category-option').forEach(option => {
         option.addEventListener('click', () => toggleCategory(option));
     });
-
+    
     updateSelectedCount();
 }
 
 function toggleCategory(element) {
     const category = element.dataset.category;
-
+    
     if (element.classList.contains('selected')) {
         element.classList.remove('selected');
         selectedCategories = selectedCategories.filter(c => c !== category);
@@ -208,7 +210,7 @@ function toggleCategory(element) {
         element.classList.add('selected');
         selectedCategories.push(category);
     }
-
+    
     updateSelectedCount();
 }
 
@@ -218,7 +220,7 @@ function updateSelectedCount() {
     const btn = document.getElementById('saveCategoriesBtn');
     const MIN_CATEGORIES = 3;
     const MAX_CATEGORIES = 7;
-
+    
     if (count === 0) {
         countEl.textContent = `Select ${MIN_CATEGORIES}-${MAX_CATEGORIES} categories`;
         countEl.style.color = '#6b7280';
@@ -241,13 +243,13 @@ function updateSelectedCount() {
 function saveCategories() {
     const MIN_CATEGORIES = 3;
     const MAX_CATEGORIES = 7;
-
+    
     if (selectedCategories.length < MIN_CATEGORIES || selectedCategories.length > MAX_CATEGORIES) return;
-
+    
     localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
     document.getElementById('categoryScreen').classList.remove('show');
     document.getElementById('hamburgerBtn').style.display = 'flex';
-
+    
     filterSochsByCategories();
     showMainApp();
 }
@@ -264,21 +266,20 @@ function filterSochsByCategories() {
 
 function showMainApp() {
     document.getElementById('mainApp').style.display = 'block';
-
-    // Update greeting
+    
     const greeting = document.getElementById('userGreeting');
     greeting.textContent = `Namaste, ${userName}! 🙏`;
-
+    
     if (filteredSochs.length === 0) {
         document.getElementById('story').innerHTML = `<p style="color:red;">No Sochs found for your selected categories. Try selecting more categories!</p>`;
         return;
     }
-
+    
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
     const dayOfYear = Math.floor((now - start) / 86400000);
     currentIndex = dayOfYear % filteredSochs.length;
-
+    
     showSoch(currentIndex);
 }
 
@@ -296,20 +297,20 @@ function updateCounter() {
 
 function displaySoch() {
     if (!currentSoch) return;
-
+    
     const emoji = categoryEmojis[currentSoch.category] || '📚';
     document.getElementById('category').textContent = `${emoji} ${currentSoch.category}`;
     document.getElementById('title').textContent = currentSoch.title;
-
+    
     const paragraphs = currentSoch.story.split('\n\n');
     document.getElementById('story').innerHTML = paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
-
+    
     document.getElementById('takeaway').textContent = currentSoch.takeaway;
     document.getElementById('question').textContent = currentSoch.quizQuestion;
-
+    
     const optionsDiv = document.getElementById('options');
     optionsDiv.innerHTML = '';
-
+    
     currentSoch.quizOptions.split('|').forEach(option => {
         const div = document.createElement('div');
         div.className = 'option';
@@ -319,44 +320,74 @@ function displaySoch() {
         div.onclick = () => checkAnswer(letter, div);
         optionsDiv.appendChild(div);
     });
-
+    
     document.getElementById('feedback').className = 'feedback';
+    document.getElementById('feedback').innerHTML = '';
 }
 
 function checkAnswer(selected, element) {
     if (answered) return;
     answered = true;
-
+    
     const feedback = document.getElementById('feedback');
     const allOptions = document.querySelectorAll('.option');
     allOptions.forEach(opt => opt.style.pointerEvents = 'none');
-
+    
     if (selected === currentSoch.quizAnswer) {
-        // Correct answer!
         element.classList.add('correct');
-        
-        // 🎉 CONFETTI CELEBRATION!
         triggerConfetti(element);
         
         feedback.className = 'feedback show correct';
-        feedback.textContent = '✅ Bahut badiya! Sahi jawab!';
+        
+        let feedbackHTML = '<div class="feedback-message">✅ Bahut badiya! Sahi jawab!</div>';
+        
+        if (currentSoch.bonusTip && currentSoch.bonusTip.trim()) {
+            feedbackHTML += `
+                <div class="bonus-tip">
+                    <div class="bonus-tip-header">🎁 Bonus Insight!</div>
+                    <div class="bonus-tip-text">${currentSoch.bonusTip}</div>
+                </div>
+            `;
+        }
+        
+        feedback.innerHTML = feedbackHTML;
     } else {
-        // Wrong answer
         element.classList.add('wrong');
+        
+        allOptions.forEach(opt => {
+            if (opt.querySelector('.option-letter').textContent === currentSoch.quizAnswer) {
+                opt.classList.add('correct');
+            }
+        });
+        
         feedback.className = 'feedback show wrong';
-        feedback.textContent = `❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}`;
-@@ -347,90 +353,128 @@
+        
+        let feedbackHTML = `<div class="feedback-message">❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}</div>`;
+        
+        if (currentSoch.bonusTip && currentSoch.bonusTip.trim()) {
+            feedbackHTML += `
+                <div class="bonus-tip">
+                    <div class="bonus-tip-header">💡 Did You Know?</div>
+                    <div class="bonus-tip-text">${currentSoch.bonusTip}</div>
+                    <div class="bonus-tip-encouragement">💪 Keep learning! Every mistake makes you smarter!</div>
+                </div>
+            `;
+        }
+        
+        feedback.innerHTML = feedbackHTML;
     }
 }
 
-// 🎉 Confetti Function
 function triggerConfetti(element) {
-    // Get button position for confetti origin
+    if (typeof confetti === 'undefined') {
+        console.warn('Confetti library not loaded');
+        return;
+    }
+    
     const rect = element.getBoundingClientRect();
     const x = (rect.left + rect.width / 2) / window.innerWidth;
     const y = (rect.top + rect.height / 2) / window.innerHeight;
     
-    // First burst - from the button
     confetti({
         particleCount: 100,
         spread: 70,
@@ -364,7 +395,6 @@ function triggerConfetti(element) {
         colors: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#fbbf24', '#f59e0b']
     });
     
-    // Second burst - delayed slightly
     setTimeout(() => {
         confetti({
             particleCount: 50,
@@ -375,7 +405,6 @@ function triggerConfetti(element) {
         });
     }, 150);
     
-    // Third burst - from other side
     setTimeout(() => {
         confetti({
             particleCount: 50,
@@ -423,7 +452,6 @@ function copyToClipboard(text) {
     });
 }
 
-// Hamburger Menu Functions
 function openCategorySelection() {
     document.getElementById('sideMenu').classList.remove('open');
     showCategoryScreen();
@@ -432,7 +460,7 @@ function openCategorySelection() {
 
 function editName() {
     document.getElementById('sideMenu').classList.remove('open');
-
+    
     const newName = prompt('What should we call you?', userName);
     if (newName && newName.trim().length >= 2) {
         userName = newName.trim();
@@ -453,9 +481,9 @@ function closeAbout() {
 
 function shareApp() {
     document.getElementById('sideMenu').classList.remove('open');
-
+    
     const shareText = `📱 Daily Soch - Your daily dose of wisdom!\n\nNo fluff. No BS. Just 1-minute case studies.\n\nCheck it out: ${window.location.href}`;
-
+    
     if (navigator.share) {
         navigator.share({
             title: 'Daily Soch',
@@ -468,9 +496,9 @@ function shareApp() {
     }
 }
 
-// Close modal when clicking outside
 document.addEventListener('click', (e) => {
     const modal = document.getElementById('aboutModal');
     if (modal && e.target === modal) {
         closeAbout();
     }
+});
