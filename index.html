@@ -11,12 +11,23 @@
     <meta name="theme-color" content="#10b981">
 </head>
 <body>
-    <!-- Category Selection Screen (Full Screen Overlay) -->
-    <div id="categoryScreen" class="category-screen">
-        <div class="category-content">
+    <!-- Name Collection Screen -->
+    <div id="nameScreen" class="onboarding-screen">
+        <div class="onboarding-content">
             <h1>🌱 Welcome to Daily Soch</h1>
             <p class="subtitle">आपका दैनिक ज्ञान • Your Daily Wisdom</p>
-            <h2>Pick Your Favorite Topics</h2>
+            <h2>What should we call you?</h2>
+            
+            <input type="text" id="userName" class="name-input" placeholder="Enter your name" maxlength="30">
+            
+            <button id="continueBtn" class="btn-primary" disabled>Continue →</button>
+        </div>
+    </div>
+
+    <!-- Category Selection Screen -->
+    <div id="categoryScreen" class="onboarding-screen">
+        <div class="onboarding-content">
+            <h1 id="categoryGreeting">Great! Now pick your interests</h1>
             <p class="instruction">Select 3-7 categories to personalize your experience</p>
             
             <div id="categoryGrid" class="category-grid">
@@ -30,14 +41,58 @@
         </div>
     </div>
 
-    <!-- Settings Button (Top Right) -->
-    <button id="settingsBtn" class="settings-btn" style="display: none;">⚙️</button>
+    <!-- Hamburger Menu -->
+    <button id="hamburgerBtn" class="hamburger-btn" style="display: none;">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Side Menu -->
+    <div id="sideMenu" class="side-menu">
+        <div class="side-menu-header">
+            <h3>Menu</h3>
+            <button id="closeMenuBtn" class="close-menu-btn">✕</button>
+        </div>
+        <div class="side-menu-content">
+            <button class="menu-item" onclick="openCategorySelection()">
+                <span class="menu-icon">🎯</span>
+                <span>Change Categories</span>
+            </button>
+            <button class="menu-item" onclick="editName()">
+                <span class="menu-icon">✏️</span>
+                <span>Edit Name</span>
+            </button>
+            <button class="menu-item" onclick="showAbout()">
+                <span class="menu-icon">ℹ️</span>
+                <span>About Daily Soch</span>
+            </button>
+            <button class="menu-item" onclick="shareApp()">
+                <span class="menu-icon">📤</span>
+                <span>Share App</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAbout()">✕</button>
+            <h2>About Daily Soch 🌱</h2>
+            <p class="about-text">
+                Daily Soch is your daily dose of wisdom—under 1 minute, zero noise. 
+                We deliver powerful case studies from India and beyond. Real knowledge, 
+                straight to the point. Har din kuch naya seekho! 🌱
+            </p>
+            <p class="about-tagline">No fluff. No BS. Just pure learning.</p>
+        </div>
+    </div>
 
     <!-- Main App Container -->
-    <div class="container">
+    <div class="container" style="display: none;" id="mainApp">
         <header>
             <div class="logo">🌱 Daily Soch</div>
-            <p class="tagline">आज का विचार • Your Daily Dose of Wisdom</p>
+            <p class="tagline" id="userGreeting">आज का विचार • Your Daily Dose of Wisdom</p>
             <div id="soch-counter" class="soch-counter">Loading...</div>
         </header>
 
