@@ -720,55 +720,375 @@ footer p {
     margin-top: 20px;
 }
 
-@media (max-width: 640px) {
+/* Mobile & Tablet Responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    /* Header Mobile */
+    header {
+        padding: 24px 20px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .tagline {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .soch-counter {
+        font-size: 14px;
+        padding: 6px 16px;
+    }
+
+    /* Card Mobile */
+    .card {
+        padding: 24px 20px;
+        border-radius: 20px;
+    }
+
+    .category {
+        font-size: 13px;
+        padding: 6px 14px;
+        margin-bottom: 16px;
+    }
+
+    .title {
+        font-size: 22px;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .reading-time {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .story {
+        font-size: 16px;
+        line-height: 1.7;
+        margin-bottom: 24px;
+    }
+
+    .story p {
+        margin-bottom: 16px;
+    }
+
+    /* Takeaway Mobile */
+    .takeaway {
+        padding: 16px 18px;
+        margin-bottom: 24px;
+    }
+
+    .takeaway-icon {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    .takeaway strong {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .takeaway p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Quiz Mobile */
+    .quiz {
+        padding: 20px 18px;
+        border-radius: 14px;
+    }
+
+    .quiz h3 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .question {
+        font-size: 16px;
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+
+    .options {
+        gap: 10px;
+    }
+
+    .option {
+        padding: 14px 12px;
+        border-radius: 10px;
+    }
+
+    .option-letter {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .option-text {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .feedback {
+        margin-top: 16px;
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    /* Navigation Mobile */
+    .navigation {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .nav-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 15px;
+    }
+
+    /* Actions Mobile */
+    .actions {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .action-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    /* Footer Mobile */
+    footer {
+        margin-top: 30px;
+        font-size: 13px;
+    }
+
+    /* Onboarding Mobile */
+    .onboarding-screen {
+        padding: 15px;
+    }
+
+    .onboarding-content {
+        padding: 32px 24px;
+        border-radius: 20px;
+    }
+
+    .onboarding-content h1 {
+        font-size: 26px;
+        margin-bottom: 8px;
+    }
+
+    .onboarding-content .subtitle {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .onboarding-content h2 {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+
+    .onboarding-content .instruction {
+        font-size: 13px;
+        margin-bottom: 24px;
+    }
+
+    /* Name Input Mobile */
+    .name-input {
+        padding: 14px 16px;
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    /* Category Grid Mobile */
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .category-option {
+        padding: 14px 10px;
+        border-radius: 10px;
+    }
+
+    .category-option .emoji {
+        font-size: 28px;
+        margin-bottom: 6px;
+    }
+
+    .category-option .name {
+        font-size: 13px;
+    }
+
+    .load-more-btn {
+        padding: 14px 10px;
+    }
+
+    .load-more-btn .emoji {
+        font-size: 28px;
+    }
+
+    .load-more-btn .name {
+        font-size: 13px;
+    }
+
+    .load-more-btn .count {
+        font-size: 11px;
+    }
+
+    /* Selection Info Mobile */
+    .selection-info p {
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .btn-primary {
+        padding: 14px 32px;
+        font-size: 16px;
+    }
+
+    /* Hamburger Menu Mobile */
+    .hamburger-btn {
+        width: 48px;
+        height: 48px;
+        top: 15px;
+        left: 15px;
+    }
+
+    .hamburger-btn span {
+        width: 22px;
+        height: 2.5px;
+    }
+
+    /* Side Menu Mobile */
+    .side-menu {
+        width: 85%;
+        max-width: 320px;
+        left: -85%;
+    }
+
+    .side-menu-header {
+        padding: 20px 18px;
+    }
+
+    .side-menu-header h3 {
+        font-size: 20px;
+    }
+
+    .close-menu-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+    }
+
+    .menu-item {
+        padding: 16px 20px;
+        font-size: 15px;
+    }
+
+    .menu-icon {
+        font-size: 22px;
+        width: 28px;
+    }
+
+    /* Modal Mobile */
+    .modal {
+        padding: 15px;
+    }
+
+    .modal-content {
+        padding: 28px 20px;
+        border-radius: 20px;
+    }
+
+    .modal-close {
+        top: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    .modal-content h2 {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    .about-text {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 14px;
+    }
+
+    .about-tagline {
+        font-size: 16px;
+        padding: 14px;
+    }
+}
+
+/* Extra Small Phones */
+@media (max-width: 375px) {
     body {
         padding: 10px;
     }
 
     .logo {
-        font-size: 36px;
+        font-size: 28px;
     }
 
-    header {
-        padding: 20px;
-    }
-
-    .card {
-        padding: 25px;
+    .tagline {
+        font-size: 13px;
     }
 
     .title {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .story {
-        font-size: 16px;
+        font-size: 15px;
+    }
+
+    .card {
+        padding: 20px 16px;
     }
 
     .onboarding-content {
-        padding: 30px 20px;
+        padding: 24px 18px;
     }
-    
+
     .onboarding-content h1 {
-        font-size: 26px;
+        font-size: 24px;
     }
-    
+
     .category-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 10px;
-    }
-    
-    .hamburger-btn {
-        width: 45px;
-        height: 45px;
+        gap: 8px;
     }
 
-    .side-menu {
-        width: 280px;
-        left: -280px;
+    .category-option {
+        padding: 12px 8px;
     }
 
-    .modal-content {
-        padding: 30px 20px;
+    .category-option .emoji {
+        font-size: 24px;
+    }
+
+    .category-option .name {
+        font-size: 12px;
     }
 }
