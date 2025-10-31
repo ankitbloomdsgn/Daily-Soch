@@ -319,8 +319,8 @@ footer p {
     margin: 5px 0;
 }
 
-/* Category Selection Screen */
-.category-screen {
+/* Onboarding Screens */
+.onboarding-screen {
     position: fixed;
     top: 0;
     left: 0;
@@ -335,11 +335,11 @@ footer p {
     overflow-y: auto;
 }
 
-.category-screen.show {
+.onboarding-screen.show {
     display: flex;
 }
 
-.category-content {
+.onboarding-content {
     background: white;
     border-radius: 24px;
     padding: 40px 30px;
@@ -360,28 +360,28 @@ footer p {
     }
 }
 
-.category-content h1 {
+.onboarding-content h1 {
     font-size: 32px;
     margin-bottom: 10px;
     text-align: center;
     color: #1f2937;
 }
 
-.category-content .subtitle {
+.onboarding-content .subtitle {
     text-align: center;
     color: #6b7280;
     font-size: 16px;
     margin-bottom: 30px;
 }
 
-.category-content h2 {
+.onboarding-content h2 {
     font-size: 24px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     text-align: center;
     color: #1f2937;
 }
 
-.category-content .instruction {
+.onboarding-content .instruction {
     text-align: center;
     color: #6b7280;
     margin-bottom: 30px;
@@ -389,6 +389,29 @@ footer p {
     font-weight: 500;
 }
 
+/* Name Input */
+.name-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 18px;
+    margin-bottom: 30px;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.name-input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.name-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Category Grid */
 .category-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -499,30 +522,202 @@ footer p {
     box-shadow: none;
 }
 
-/* Settings Button */
-.settings-btn {
+/* Hamburger Menu */
+.hamburger-btn {
     position: fixed;
     top: 20px;
-    right: 20px;
+    left: 20px;
     background: white;
     border: 2px solid #e5e7eb;
     width: 50px;
     height: 50px;
-    border-radius: 50%;
-    font-size: 24px;
+    border-radius: 12px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
     z-index: 100;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 6px;
+    padding: 0;
 }
 
-.settings-btn:hover {
-    transform: rotate(90deg);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.hamburger-btn span {
+    width: 24px;
+    height: 3px;
+    background: #4b5563;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+.hamburger-btn:hover {
     border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hamburger-btn:hover span {
+    background: #10b981;
+}
+
+/* Side Menu */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100%;
+    background: white;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    z-index: 200;
+    transition: left 0.3s ease-out;
+    overflow-y: auto;
+}
+
+.side-menu.open {
+    left: 0;
+}
+
+.side-menu-header {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 24px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.side-menu-header h3 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.close-menu-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.close-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.side-menu-content {
+    padding: 20px 0;
+}
+
+.menu-item {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+    font-weight: 500;
+    color: #374151;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.menu-item:hover {
+    background: #f9fafb;
+}
+
+.menu-icon {
+    font-size: 24px;
+    width: 32px;
+    text-align: center;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 300;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #f3f4f6;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    color: #6b7280;
+}
+
+.modal-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.modal-content h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.about-text {
+    color: #374151;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+
+.about-tagline {
+    color: #10b981;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    padding: 16px;
+    background: #f0fdf4;
+    border-radius: 12px;
+    margin-top: 20px;
 }
 
 @media (max-width: 640px) {
@@ -550,11 +745,11 @@ footer p {
         font-size: 16px;
     }
 
-    .category-content {
+    .onboarding-content {
         padding: 30px 20px;
     }
     
-    .category-content h1 {
+    .onboarding-content h1 {
         font-size: 26px;
     }
     
@@ -563,9 +758,17 @@ footer p {
         gap: 10px;
     }
     
-    .settings-btn {
+    .hamburger-btn {
         width: 45px;
         height: 45px;
-        font-size: 20px;
+    }
+
+    .side-menu {
+        width: 280px;
+        left: -280px;
+    }
+
+    .modal-content {
+        padding: 30px 20px;
     }
 }
