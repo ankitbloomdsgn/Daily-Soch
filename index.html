@@ -11,6 +11,28 @@
     <meta name="theme-color" content="#10b981">
 </head>
 <body>
+    <!-- Update Toast Notification -->
+    <div id="updateToast" class="update-toast">
+        <button class="toast-close" onclick="dismissToast()">✕</button>
+        <div class="toast-icon">🎉</div>
+        <h3 class="toast-title">Daily Soch is Getting Better!</h3>
+        <p class="toast-message">
+            We're constantly making changes to improve your experience. 
+            Keep the app updated to access new features and improvements!
+        </p>
+        <div class="toast-actions">
+            <button class="toast-btn primary" onclick="updateApp()">
+                Yes, Show Me! 🚀
+            </button>
+            <button class="toast-btn secondary" onclick="dismissToast()">
+                Later
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay for toast (optional, for focus) -->
+    <div id="toastOverlay" class="toast-overlay"></div>
+
     <!-- Name Collection Screen -->
     <div id="nameScreen" class="onboarding-screen">
         <div class="onboarding-content">
