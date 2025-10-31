@@ -104,7 +104,7 @@ async function loadAllSochs() {
         const text = await response.text();
         const json = JSON.parse(text.substr(47).slice(0, -2));
         
-        allSochs = json.table.rows.filter(row => row.c[1]?.v).map((row, index) => ({
+        allSochsallSochs = json.table.rows.filter(row => row.c[1]?.v).map((row, index) => ({
             id: row.c[0]?.v || (index + 1),
             title: row.c[1]?.v || '',
             category: row.c[2]?.v || 'General',
@@ -112,7 +112,8 @@ async function loadAllSochs() {
             takeaway: row.c[4]?.v || '',
             quizQuestion: row.c[5]?.v || '',
             quizOptions: row.c[6]?.v || '',
-            quizAnswer: row.c[7]?.v || ''
+            quizAnswer: row.c[7]?.v || '',
+            bonusTip: row.c[8]?.v || ''
         }));
         
         const savedName = localStorage.getItem('userName');
@@ -332,25 +333,48 @@ function checkAnswer(selected, element) {
     allOptions.forEach(opt => opt.style.pointerEvents = 'none');
     
     if (selected === currentSoch.quizAnswer) {
-        // Correct answer!
+        // ✅ CORRECT ANSWER!
         element.classList.add('correct');
         
         // 🎉 CONFETTI CELEBRATION!
         triggerConfetti(element);
         
+        // Build feedback with bonus tip
         feedback.className = 'feedback show correct';
-        feedback.textContent = '✅ Bahut badiya! Sahi jawab!';
+        feedback.innerHTML = `
+            <div class="feedback-message">✅ Bahut badiya! Sahi jawab!</div>
+            ${currentSoch.bonusTip ? `
+                <div class="bonus-tip">
+                    <div class="bonus-tip-header">🎁 Bonus Insight!</div>
+                    <div class="bonus-tip-text">${currentSoch.bonusTip}</div>
+                </div>
+            ` : ''}
+        `;
     } else {
-        // Wrong answer
+        // ❌ WRONG ANSWER
         element.classList.add('wrong');
-        feedback.className = 'feedback show wrong';
-        feedback.textContent = `❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}`;
+        
+        // Show correct answer in green
         allOptions.forEach(opt => {
             if (opt.querySelector('.option-letter').textContent === currentSoch.quizAnswer) {
                 opt.classList.add('correct');
             }
         });
+        
+        // Build feedback with bonus tip
+        feedback.className = 'feedback show wrong';
+        feedback.innerHTML = `
+            <div class="feedback-message">❌ Oops! Sahi jawab hai: ${currentSoch.quizAnswer}</div>
+            ${currentSoch.bonusTip ? `
+                <div class="bonus-tip">
+                    <div class="bonus-tip-header">💡 Did You Know?</div>
+                    <div class="bonus-tip-text">${currentSoch.bonusTip}</div>
+                    <div class="bonus-tip-encouragement">💪 Keep learning! Every mistake makes you smarter!</div>
+                </div>
+            ` : ''}
+        `;
     }
+}
 }
 
 // 🎉 Confetti Function
