@@ -7,6 +7,9 @@ let currentSoch = null;
 let currentIndex = 0;
 let answered = false;
 let selectedCategories = [];
+let allCategories = [];
+let showingAllCategories = false;
+const INITIAL_CATEGORIES_TO_SHOW = 12;
 
 const categoryEmojis = {
     'Science': '🔬',
@@ -37,7 +40,6 @@ window.addEventListener('DOMContentLoaded', init);
 function init() {
     loadAllSochs();
     
-    // Check if user has already selected categories
     const saved = localStorage.getItem('selectedCategories');
     if (saved) {
         selectedCategories = JSON.parse(saved);
@@ -65,11 +67,9 @@ async function loadAllSochs() {
         
         const saved = localStorage.getItem('selectedCategories');
         if (!saved) {
-            // First time user - show category selection
             showCategoryScreen();
             loadCategoryGrid();
         } else {
-            // Returning user - show daily soch
             filterSochsByCategories();
             showDailySoch();
         }
@@ -83,11 +83,19 @@ function showCategoryScreen() {
 }
 
 function loadCategoryGrid() {
-    // Get unique categories from all sochs
-    const categories = [...new Set(allSochs.map(s => s.category))].sort();
+    allCategories = [...new Set(allSochs.map(s => s.category))].sort();
+    showingAllCategories = false;
     
+    renderCategories();
+    
+    document.getElementById('saveCategoriesBtn').addEventListener('click', saveCategories);
+}
+
+function renderCategories() {
     const grid = document.getElementById('categoryGrid');
-    grid.innerHTML = categories.map(cat => {
+    const categoriesToShow = showingAllCategories ? allCategories : allCategories.slice(0, INITIAL_CATEGORIES_TO_SHOW);
+    
+    grid.innerHTML = categoriesToShow.map(cat => {
         const emoji = categoryEmojis[cat] || '📚';
         return `
             <div class="category-option" data-category="${cat}">
@@ -97,12 +105,32 @@ function loadCategoryGrid() {
         `;
     }).join('');
     
-    // Add click listeners
+    if (!showingAllCategories && allCategories.length > INITIAL_CATEGORIES_TO_SHOW) {
+        const loadMoreBtn = document.createElement('div');
+        loadMoreBtn.className = 'load-more-btn';
+        loadMoreBtn.innerHTML = `
+            <div class="emoji">👇</div>
+            <div class="name">Load More</div>
+            <div class="count">(${allCategories.length - INITIAL_CATEGORIES_TO_SHOW} more)</div>
+        `;
+        loadMoreBtn.onclick = () => {
+            showingAllCategories = true;
+            renderCategories();
+        };
+        grid.appendChild(loadMoreBtn);
+    }
+    
     document.querySelectorAll('.category-option').forEach(option => {
         option.addEventListener('click', () => toggleCategory(option));
     });
     
-    document.getElementById('saveCategoriesBtn').addEventListener('click', saveCategories);
+    if (selectedCategories.length > 0) {
+        selectedCategories.forEach(cat => {
+            const option = document.querySelector(`[data-category="${cat}"]`);
+            if (option) option.classList.add('selected');
+        });
+        updateSelectedCount();
+    }
 }
 
 function toggleCategory(element) {
@@ -123,21 +151,33 @@ function updateSelectedCount() {
     const count = selectedCategories.length;
     const countEl = document.getElementById('selectedCount');
     const btn = document.getElementById('saveCategoriesBtn');
+    const MIN_CATEGORIES = 3;
+    const MAX_CATEGORIES = 7;
     
     if (count === 0) {
-        countEl.textContent = 'Select at least 3 categories';
+        countEl.textContent = `Select ${MIN_CATEGORIES}-${MAX_CATEGORIES} categories`;
+        countEl.style.color = '#718096';
         btn.disabled = true;
-    } else if (count < 3) {
-        countEl.textContent = `Selected ${count} - pick ${3 - count} more`;
+    } else if (count < MIN_CATEGORIES) {
+        countEl.textContent = `Selected ${count} - pick ${MIN_CATEGORIES - count} more`;
+        countEl.style.color = '#718096';
+        btn.disabled = true;
+    } else if (count > MAX_CATEGORIES) {
+        countEl.textContent = `⚠️ Maximum ${MAX_CATEGORIES} categories - please remove ${count - MAX_CATEGORIES}`;
+        countEl.style.color = '#e53e3e';
         btn.disabled = true;
     } else {
-        countEl.textContent = `✓ ${count} categories selected`;
+        countEl.textContent = `✓ ${count} categories selected (${MAX_CATEGORIES - count} more allowed)`;
+        countEl.style.color = '#48bb78';
         btn.disabled = false;
     }
 }
 
 function saveCategories() {
-    if (selectedCategories.length < 3) return;
+    const MIN_CATEGORIES = 3;
+    const MAX_CATEGORIES = 7;
+    
+    if (selectedCategories.length < MIN_CATEGORIES || selectedCategories.length > MAX_CATEGORIES) return;
     
     localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
     document.getElementById('categoryScreen').classList.remove('show');
@@ -171,22 +211,13 @@ function showDailySoch() {
     showSoch(currentIndex);
 }
 
-// Settings button to change categories
 document.addEventListener('DOMContentLoaded', () => {
     const settingsBtn = document.getElementById('settingsBtn');
     if (settingsBtn) {
         settingsBtn.addEventListener('click', () => {
             showCategoryScreen();
-            loadCategoryGrid();
-            
-            // Pre-select current categories
-            setTimeout(() => {
-                selectedCategories.forEach(cat => {
-                    const option = document.querySelector(`[data-category="${cat}"]`);
-                    if (option) option.classList.add('selected');
-                });
-                updateSelectedCount();
-            }, 100);
+            showingAllCategories = true;
+            renderCategories();
         });
     }
 });
