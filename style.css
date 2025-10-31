@@ -241,15 +241,138 @@ header {
 }
 }
 
-.feedback {
-    margin-top: 20px;
+/* Bonus Tip Styling */
+.bonus-tip {
+    margin-top: 16px;
     padding: 16px;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    border-radius: 10px;
+    text-align: left;
+    animation: slideInBonus 0.5s ease-out 0.3s both;
+}
+
+@keyframes slideInBonus {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bonus-tip-header {
+    font-size: 16px;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bonus-tip-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #78350f;
+    font-weight: 500;
+}
+
+.bonus-tip-encouragement {
+    margin-top: 12px;
+    font-size: 14px;
     font-weight: 600;
+    color: #059669;
     text-align: center;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.3s;
+    padding-top: 12px;
+    border-top: 2px solid rgba(245, 158, 11, 0.3);
+}
+
+.feedback-message {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Mobile Bonus Tip */
+@media (max-width: 768px) {
+    .bonus-tip {
+        padding: 14px;
+        margin-top: 14px;
+    }
+    
+    .bonus-tip-header {
+        font-size: 15px;
+    }
+    
+    .bonus-tip-text {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    
+    .bonus-tip-encouragement {
+        font-size: 13px;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+    
+    .feedback-message {
+        font-size: 15px;
+    }
+}
+```
+
+6. Commit message: `Add beautiful styling for bonus tips`
+7. Click **"Commit changes"**
+
+---
+
+## ⏱️ WAIT 2-3 MINUTES & TEST!
+
+After 2-3 minutes:
+
+1. Open **Incognito window**
+2. Go to: `https://ankitbloomdsgn.github.io/Daily-Soch/`
+3. Read a case study
+4. Answer quiz question
+
+---
+
+## 🎨 WHAT YOU'LL SEE:
+
+### ✅ **When CORRECT:**
+```
+🎉 [Confetti explosion]
+
+✅ Bahut badiya! Sahi jawab!
+
+┌─────────────────────────────┐
+│ 🎁 Bonus Insight!           │
+│                             │
+│ [Fascinating extra fact     │
+│  about the case study]      │
+└─────────────────────────────┘
+```
+
+### ❌ **When WRONG:**
+```
+[Shake animation]
+
+❌ Oops! Sahi jawab hai: B
+
+┌─────────────────────────────┐
+│ 💡 Did You Know?            │
+│                             │
+│ [Fascinating extra fact     │
+│  about the case study]      │
+│                             │
+│ ───────────────────────────│
+│ 💪 Keep learning! Every     │
+│    mistake makes you        │
+│    smarter!                 │
+└─────────────────────────────┘
 }
 
 .feedback.show {
