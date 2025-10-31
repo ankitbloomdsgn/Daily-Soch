@@ -194,17 +194,51 @@ header {
     border-color: #10b981;
 }
 
+.option.correct {
+    background: #d1fae5;
+    border-color: #10b981;
+    animation: correctPulse 0.6s ease-out;
+}
+
 .option.correct .option-letter {
     background: #10b981;
+}
+
+@keyframes correctPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 }
 
 .option.wrong {
     background: #fee2e2;
     border-color: #ef4444;
+    animation: wrongShake 0.5s ease-out;
 }
 
 .option.wrong .option-letter {
     background: #ef4444;
+}
+
+@keyframes wrongShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
+}
 }
 
 .feedback {
