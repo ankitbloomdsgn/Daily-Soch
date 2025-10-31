@@ -31,7 +31,27 @@
 </head>
 <body>
     <div class="container">
+        <!-- Category Selection Screen -->
+<div id="categoryScreen" class="category-screen">
+    <div class="category-content">
+        <h1>🌱 Welcome to Daily Soch</h1>
+        <p class="subtitle">आपका दैनिक ज्ञान • Your Daily Wisdom</p>
+        <h2>Pick Your Favorite Topics</h2>
+        <p class="instruction">Select at least 3 categories to personalize your experience</p>
         
+        <div id="categoryGrid" class="category-grid">
+            <!-- Categories will be loaded here by JavaScript -->
+        </div>
+        
+        <div class="selection-info">
+            <p id="selectedCount">Select at least 3 categories</p>
+            <button id="saveCategoriesBtn" class="btn-primary" disabled>Let's Go! →</button>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Button (appears after onboarding) -->
+<button id="settingsBtn" class="settings-btn" style="display: none;">⚙️</button>
         <!-- Header -->
         <header class="header">
             <h1>🌱 Daily Soch</h1>
