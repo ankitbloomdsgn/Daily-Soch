@@ -1,3 +1,92 @@
+// App Version Control
+const APP_VERSION = '1.2';
+const TOAST_DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+// Check for updates on page load
+function checkForUpdates() {
+    const lastVersion = localStorage.getItem('appVersion');
+    const lastDismissed = localStorage.getItem('toastDismissedAt');
+    const now = Date.now();
+    
+    // Show toast if:
+    // 1. New version detected OR
+    // 2. Toast was dismissed more than 24 hours ago
+    const shouldShow = (lastVersion && lastVersion !== APP_VERSION) || 
+                       (lastDismissed && (now - parseInt(lastDismissed)) > TOAST_DISMISS_DURATION);
+    
+    if (shouldShow) {
+        setTimeout(showUpdateToast, 2000); // Show after 2 seconds (user has time to see the app)
+    }
+    
+    // Update version if not already set
+    if (!lastVersion) {
+        localStorage.setItem('appVersion', APP_VERSION);
+    }
+}
+
+function showUpdateToast() {
+    const toast = document.getElementById('updateToast');
+    const overlay = document.getElementById('toastOverlay');
+    
+    if (toast) {
+        toast.classList.add('show');
+    }
+    
+    if (overlay) {
+        overlay.classList.add('show');
+    }
+}
+
+function hideUpdateToast() {
+    const toast = document.getElementById('updateToast');
+    const overlay = document.getElementById('toastOverlay');
+    
+    if (toast) {
+        toast.classList.remove('show');
+    }
+    
+    if (overlay) {
+        overlay.classList.remove('show');
+    }
+}
+
+function updateApp() {
+    // Update version in localStorage
+    localStorage.setItem('appVersion', APP_VERSION);
+    localStorage.removeItem('toastDismissedAt');
+    
+    // Show loading message
+    const toast = document.getElementById('updateToast');
+    if (toast) {
+        toast.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">⚡</div>
+                <h3 style="margin: 0 0 8px 0; color: #1f2937;">Updating...</h3>
+                <p style="margin: 0; color: #6b7280;">Please wait a moment</p>
+            </div>
+        `;
+    }
+    
+    // Hard refresh after short delay
+    setTimeout(() => {
+        window.location.reload(true);
+    }, 800);
+}
+
+function dismissToast() {
+    // Store dismissal time
+    localStorage.setItem('toastDismissedAt', Date.now().toString());
+    hideUpdateToast();
+}
+
+// Close toast if overlay clicked
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('toastOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', dismissToast);
+    }
+});
+
 const SHEET_ID = '17lLI7iWHeidBK7yyhG8rugXfNj8sxCq-zviBIMzTu2E';
 const SHEET_NAME = 'sheet1';
 
@@ -40,6 +129,8 @@ const categoryEmojis = {
 window.addEventListener('DOMContentLoaded', init);
 
 function init() {
+    checkForUpdates(); // Check for updates on app load
+    
     loadAllSochs();
     
     const savedName = localStorage.getItem('userName');
