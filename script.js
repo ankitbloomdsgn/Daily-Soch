@@ -9,8 +9,6 @@ let answered = false;
 let selectedCategories = [];
 let userName = '';
 let allCategories = [];
-let showingAllCategories = false;
-const INITIAL_CATEGORIES_TO_SHOW = 10;
 
 const categoryEmojis = {
     'Science': '🔬',
@@ -168,7 +166,6 @@ function showCategoryScreen() {
 
 function loadCategoryGrid() {
     allCategories = [...new Set(allSochs.map(s => s.category))].sort();
-    showingAllCategories = false;
     
     renderCategories();
     
@@ -181,9 +178,9 @@ function loadCategoryGrid() {
 
 function renderCategories() {
     const grid = document.getElementById('categoryGrid');
-    const categoriesToShow = showingAllCategories ? allCategories : allCategories.slice(0, INITIAL_CATEGORIES_TO_SHOW);
     
-    grid.innerHTML = categoriesToShow.map(cat => {
+    // Show ALL categories at once
+    grid.innerHTML = allCategories.map(cat => {
         const emoji = categoryEmojis[cat] || '📚';
         const isSelected = selectedCategories.includes(cat) ? 'selected' : '';
         return `
@@ -193,21 +190,6 @@ function renderCategories() {
             </div>
         `;
     }).join('');
-    
-    if (!showingAllCategories && allCategories.length > INITIAL_CATEGORIES_TO_SHOW) {
-        const loadMoreBtn = document.createElement('div');
-        loadMoreBtn.className = 'load-more-btn';
-        loadMoreBtn.innerHTML = `
-            <div class="emoji">👇</div>
-            <div class="name">Load More</div>
-            <div class="count">(${allCategories.length - INITIAL_CATEGORIES_TO_SHOW} more)</div>
-        `;
-        loadMoreBtn.onclick = () => {
-            showingAllCategories = true;
-            renderCategories();
-        };
-        grid.appendChild(loadMoreBtn);
-    }
     
     document.querySelectorAll('.category-option').forEach(option => {
         option.addEventListener('click', () => toggleCategory(option));
@@ -404,7 +386,6 @@ function copyToClipboard(text) {
 // Hamburger Menu Functions
 function openCategorySelection() {
     document.getElementById('sideMenu').classList.remove('open');
-    showingAllCategories = true;
     showCategoryScreen();
     renderCategories();
 }
