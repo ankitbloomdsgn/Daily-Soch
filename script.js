@@ -156,11 +156,11 @@ function updateSelectedCount() {
     
     if (count === 0) {
         countEl.textContent = `Select ${MIN_CATEGORIES}-${MAX_CATEGORIES} categories`;
-        countEl.style.color = '#718096';
+        countEl.style.color = '#6b7280';
         btn.disabled = true;
     } else if (count < MIN_CATEGORIES) {
         countEl.textContent = `Selected ${count} - pick ${MIN_CATEGORIES - count} more`;
-        countEl.style.color = '#718096';
+        countEl.style.color = '#6b7280';
         btn.disabled = true;
     } else if (count > MAX_CATEGORIES) {
         countEl.textContent = `⚠️ Maximum ${MAX_CATEGORIES} categories - please remove ${count - MAX_CATEGORIES}`;
