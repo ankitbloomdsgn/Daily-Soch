@@ -7,9 +7,10 @@ let currentSoch = null;
 let currentIndex = 0;
 let answered = false;
 let selectedCategories = [];
+let userName = '';
 let allCategories = [];
 let showingAllCategories = false;
-const INITIAL_CATEGORIES_TO_SHOW = 12;
+const INITIAL_CATEGORIES_TO_SHOW = 10;
 
 const categoryEmojis = {
     'Science': '🔬',
@@ -40,11 +41,62 @@ window.addEventListener('DOMContentLoaded', init);
 function init() {
     loadAllSochs();
     
-    const saved = localStorage.getItem('selectedCategories');
-    if (saved) {
-        selectedCategories = JSON.parse(saved);
-        document.getElementById('settingsBtn').style.display = 'flex';
+    // Check if user has completed onboarding
+    const savedName = localStorage.getItem('userName');
+    const savedCategories = localStorage.getItem('selectedCategories');
+    
+    if (savedName && savedCategories) {
+        userName = savedName;
+        selectedCategories = JSON.parse(savedCategories);
+        document.getElementById('hamburgerBtn').style.display = 'flex';
     }
+    
+    // Name input listener
+    const nameInput = document.getElementById('userName');
+    const continueBtn = document.getElementById('continueBtn');
+    
+    if (nameInput) {
+        nameInput.addEventListener('input', (e) => {
+            const value = e.target.value.trim();
+            continueBtn.disabled = value.length < 2;
+        });
+        
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !continueBtn.disabled) {
+                proceedToCategories();
+            }
+        });
+    }
+    
+    if (continueBtn) {
+        continueBtn.addEventListener('click', proceedToCategories);
+    }
+    
+    // Hamburger menu
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            sideMenu.classList.add('open');
+        });
+    }
+    
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', () => {
+            sideMenu.classList.remove('open');
+        });
+    }
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (sideMenu && sideMenu.classList.contains('open')) {
+            if (!sideMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                sideMenu.classList.remove('open');
+            }
+        }
+    });
 }
 
 async function loadAllSochs() {
@@ -65,20 +117,52 @@ async function loadAllSochs() {
             quizAnswer: row.c[7]?.v || ''
         }));
         
-        const saved = localStorage.getItem('selectedCategories');
-        if (!saved) {
+        const savedName = localStorage.getItem('userName');
+        const savedCategories = localStorage.getItem('selectedCategories');
+        
+        if (!savedName) {
+            // Show name collection screen
+            showNameScreen();
+        } else if (!savedCategories) {
+            // Show category selection
+            userName = savedName;
             showCategoryScreen();
             loadCategoryGrid();
         } else {
+            // Show main app
+            userName = savedName;
+            selectedCategories = JSON.parse(savedCategories);
             filterSochsByCategories();
-            showDailySoch();
+            showMainApp();
         }
     } catch (error) {
+        console.error('Error loading data:', error);
         document.getElementById('story').innerHTML = `<p style="color:red;">Error loading data: ${error.message}</p>`;
     }
 }
 
+function showNameScreen() {
+    document.getElementById('nameScreen').classList.add('show');
+}
+
+function proceedToCategories() {
+    const nameInput = document.getElementById('userName');
+    userName = nameInput.value.trim();
+    
+    if (userName.length < 2) return;
+    
+    localStorage.setItem('userName', userName);
+    document.getElementById('nameScreen').classList.remove('show');
+    
+    showCategoryScreen();
+    loadCategoryGrid();
+}
+
 function showCategoryScreen() {
+    const greeting = document.getElementById('categoryGreeting');
+    if (userName) {
+        greeting.textContent = `Great, ${userName}! Now pick your interests`;
+    }
     document.getElementById('categoryScreen').classList.add('show');
 }
 
@@ -88,7 +172,11 @@ function loadCategoryGrid() {
     
     renderCategories();
     
-    document.getElementById('saveCategoriesBtn').addEventListener('click', saveCategories);
+    const saveBtn = document.getElementById('saveCategoriesBtn');
+    if (saveBtn && !saveBtn.hasAttribute('data-listener')) {
+        saveBtn.addEventListener('click', saveCategories);
+        saveBtn.setAttribute('data-listener', 'true');
+    }
 }
 
 function renderCategories() {
@@ -97,8 +185,9 @@ function renderCategories() {
     
     grid.innerHTML = categoriesToShow.map(cat => {
         const emoji = categoryEmojis[cat] || '📚';
+        const isSelected = selectedCategories.includes(cat) ? 'selected' : '';
         return `
-            <div class="category-option" data-category="${cat}">
+            <div class="category-option ${isSelected}" data-category="${cat}">
                 <div class="emoji">${emoji}</div>
                 <div class="name">${cat}</div>
             </div>
@@ -124,13 +213,7 @@ function renderCategories() {
         option.addEventListener('click', () => toggleCategory(option));
     });
     
-    if (selectedCategories.length > 0) {
-        selectedCategories.forEach(cat => {
-            const option = document.querySelector(`[data-category="${cat}"]`);
-            if (option) option.classList.add('selected');
-        });
-        updateSelectedCount();
-    }
+    updateSelectedCount();
 }
 
 function toggleCategory(element) {
@@ -181,10 +264,10 @@ function saveCategories() {
     
     localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
     document.getElementById('categoryScreen').classList.remove('show');
-    document.getElementById('settingsBtn').style.display = 'flex';
+    document.getElementById('hamburgerBtn').style.display = 'flex';
     
     filterSochsByCategories();
-    showDailySoch();
+    showMainApp();
 }
 
 function filterSochsByCategories() {
@@ -197,7 +280,13 @@ function filterSochsByCategories() {
     }
 }
 
-function showDailySoch() {
+function showMainApp() {
+    document.getElementById('mainApp').style.display = 'block';
+    
+    // Update greeting
+    const greeting = document.getElementById('userGreeting');
+    greeting.textContent = `Namaste, ${userName}! 🙏`;
+    
     if (filteredSochs.length === 0) {
         document.getElementById('story').innerHTML = `<p style="color:red;">No Sochs found for your selected categories. Try selecting more categories!</p>`;
         return;
@@ -210,17 +299,6 @@ function showDailySoch() {
     
     showSoch(currentIndex);
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const settingsBtn = document.getElementById('settingsBtn');
-    if (settingsBtn) {
-        settingsBtn.addEventListener('click', () => {
-            showCategoryScreen();
-            showingAllCategories = true;
-            renderCategories();
-        });
-    }
-});
 
 function showSoch(index) {
     currentIndex = index;
@@ -322,3 +400,57 @@ function copyToClipboard(text) {
         alert('✅ Copied to clipboard!');
     });
 }
+
+// Hamburger Menu Functions
+function openCategorySelection() {
+    document.getElementById('sideMenu').classList.remove('open');
+    showingAllCategories = true;
+    showCategoryScreen();
+    renderCategories();
+}
+
+function editName() {
+    document.getElementById('sideMenu').classList.remove('open');
+    
+    const newName = prompt('What should we call you?', userName);
+    if (newName && newName.trim().length >= 2) {
+        userName = newName.trim();
+        localStorage.setItem('userName', userName);
+        document.getElementById('userGreeting').textContent = `Namaste, ${userName}! 🙏`;
+        alert('✅ Name updated successfully!');
+    }
+}
+
+function showAbout() {
+    document.getElementById('sideMenu').classList.remove('open');
+    document.getElementById('aboutModal').classList.add('show');
+}
+
+function closeAbout() {
+    document.getElementById('aboutModal').classList.remove('show');
+}
+
+function shareApp() {
+    document.getElementById('sideMenu').classList.remove('open');
+    
+    const shareText = `📱 Daily Soch - Your daily dose of wisdom!\n\nNo fluff. No BS. Just 1-minute case studies.\n\nCheck it out: ${window.location.href}`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Daily Soch',
+            text: shareText,
+            url: window.location.href
+        }).catch(() => copyToClipboard(window.location.href));
+    } else {
+        copyToClipboard(window.location.href);
+        alert('✅ Link copied! Share it on WhatsApp!');
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('aboutModal');
+    if (modal && e.target === modal) {
+        closeAbout();
+    }
+});
