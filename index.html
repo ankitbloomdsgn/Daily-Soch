@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Soch 🌱</title>
-    <link rel="stylesheet" href="style.css?v=1.2">
+    <link rel="stylesheet" href="style.css?v=1.4">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -115,6 +115,14 @@
         <header>
             <div class="logo">🌱 Daily Soch</div>
             <p class="tagline" id="userGreeting">आज का विचार • Your Daily Dose of Wisdom</p>
+            
+            <!-- Streak Counter -->
+            <div id="streak-display" class="streak-display" style="display: none;">
+                <span class="streak-emoji">🔥</span>
+                <span id="streak-number" class="streak-number">0</span>
+                <span id="streak-text" class="streak-text">day streak!</span>
+            </div>
+            
             <div id="soch-counter" class="soch-counter">Loading...</div>
         </header>
 
@@ -160,6 +168,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="script.js?v=1.2"></script>
+    <script src="script.js?v=1.4"></script>
 </body>
 </html>
