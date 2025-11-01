@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Soch 🌱</title>
-    <link rel="stylesheet" href="style.css?v=1.4">
+    <link rel="stylesheet" href="style.css?v=1.5">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -123,6 +123,21 @@
                 <span id="streak-text" class="streak-text">day streak!</span>
             </div>
             
+            <!-- Progress Percentage -->
+            <div id="progress-display" class="progress-display" style="display: none;">
+                <div class="progress-circle">
+                    <svg class="progress-ring" width="80" height="80">
+                        <circle class="progress-ring-circle-bg" cx="40" cy="40" r="32" />
+                        <circle id="progress-ring-circle" class="progress-ring-circle" cx="40" cy="40" r="32" />
+                    </svg>
+                    <div class="progress-percentage" id="progress-percentage">0%</div>
+                </div>
+                <div class="progress-text">
+                    <div class="progress-title">📊 <span id="progress-count">0 of 100</span></div>
+                    <div class="progress-subtitle">case studies completed</div>
+                </div>
+            </div>
+            
             <div id="soch-counter" class="soch-counter">Loading...</div>
         </header>
 
@@ -168,6 +183,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="script.js?v=1.4"></script>
+    <script src="script.js?v=1.5"></script>
 </body>
 </html>
