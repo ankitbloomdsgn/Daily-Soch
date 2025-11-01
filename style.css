@@ -172,6 +172,55 @@ header {
     margin-bottom: 15px;
 }
 
+/* Streak Display */
+.streak-display {
+    background: rgba(255, 255, 255, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    margin-bottom: 12px;
+    animation: streakPulse 2s ease-in-out infinite;
+}
+
+@keyframes streakPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.streak-emoji {
+    font-size: 24px;
+    animation: flameFlicker 1.5s ease-in-out infinite;
+}
+
+@keyframes flameFlicker {
+    0%, 100% {
+        transform: rotate(-5deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+.streak-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+}
+
+.streak-text {
+    font-size: 16px;
+    color: white;
+    opacity: 0.95;
+}
+
 .soch-counter {
     background: rgba(255, 255, 255, 0.25);
     display: inline-block;
@@ -960,6 +1009,25 @@ footer p {
         margin-bottom: 12px;
     }
 
+    /* Mobile Streak */
+    .streak-display {
+        padding: 8px 16px;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+    
+    .streak-emoji {
+        font-size: 20px;
+    }
+    
+    .streak-number {
+        font-size: 20px;
+    }
+    
+    .streak-text {
+        font-size: 14px;
+    }
+
     .soch-counter {
         font-size: 14px;
         padding: 6px 16px;
@@ -1284,10 +1352,14 @@ footer p {
         font-size: 20px !important;
         line-height: 1.4 !important;
         margin-bottom: 10px !important;
-        padding: 0 5px !important;
+        padding: 0 10px !important;
         word-break: break-word !important;
         display: block !important;
+        visibility: visible !important;
         white-space: normal !important;
+        overflow: visible !important;
+        height: auto !important;
+        max-width: 100% !important;
     }
 }
 
