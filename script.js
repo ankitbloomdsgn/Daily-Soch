@@ -1,24 +1,19 @@
 // App Version Control
-const APP_VERSION = '1.2';
-const TOAST_DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const APP_VERSION = '1.4';
+const TOAST_DISMISS_DURATION = 24 * 60 * 60 * 1000;
 
-// Check for updates on page load
 function checkForUpdates() {
     const lastVersion = localStorage.getItem('appVersion');
     const lastDismissed = localStorage.getItem('toastDismissedAt');
     const now = Date.now();
     
-    // Show toast if:
-    // 1. New version detected OR
-    // 2. Toast was dismissed more than 24 hours ago
     const shouldShow = (lastVersion && lastVersion !== APP_VERSION) || 
                        (lastDismissed && (now - parseInt(lastDismissed)) > TOAST_DISMISS_DURATION);
     
     if (shouldShow) {
-        setTimeout(showUpdateToast, 2000); // Show after 2 seconds (user has time to see the app)
+        setTimeout(showUpdateToast, 2000);
     }
     
-    // Update version if not already set
     if (!lastVersion) {
         localStorage.setItem('appVersion', APP_VERSION);
     }
@@ -51,11 +46,9 @@ function hideUpdateToast() {
 }
 
 function updateApp() {
-    // Update version in localStorage
     localStorage.setItem('appVersion', APP_VERSION);
     localStorage.removeItem('toastDismissedAt');
     
-    // Show loading message
     const toast = document.getElementById('updateToast');
     if (toast) {
         toast.innerHTML = `
@@ -67,25 +60,131 @@ function updateApp() {
         `;
     }
     
-    // Hard refresh after short delay
     setTimeout(() => {
         window.location.reload(true);
     }, 800);
 }
 
 function dismissToast() {
-    // Store dismissal time
     localStorage.setItem('toastDismissedAt', Date.now().toString());
     hideUpdateToast();
 }
 
-// Close toast if overlay clicked
 document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('toastOverlay');
     if (overlay) {
         overlay.addEventListener('click', dismissToast);
     }
 });
+
+// Streak Counter System
+function updateStreak() {
+    const today = new Date().toDateString();
+    const lastVisit = localStorage.getItem('lastVisitDate');
+    const currentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
+    
+    if (lastVisit === today) {
+        displayStreak(currentStreak);
+        return;
+    }
+    
+    const lastVisitDate = lastVisit ? new Date(lastVisit) : null;
+    const todayDate = new Date();
+    
+    let newStreak = currentStreak;
+    
+    if (lastVisitDate) {
+        const daysDiff = Math.floor((todayDate - lastVisitDate) / (1000 * 60 * 60 * 24));
+        
+        if (daysDiff === 1) {
+            newStreak = currentStreak + 1;
+        } else if (daysDiff > 1) {
+            newStreak = 1;
+        } else {
+            newStreak = currentStreak;
+        }
+    } else {
+        newStreak = 1;
+    }
+    
+    localStorage.setItem('lastVisitDate', today);
+    localStorage.setItem('currentStreak', newStreak.toString());
+    
+    displayStreak(newStreak);
+    
+    if (newStreak === 7 || newStreak === 30 || newStreak === 100 || (newStreak > 1 && newStreak % 10 === 0)) {
+        showStreakCelebration(newStreak);
+    }
+}
+
+function displayStreak(streak) {
+    const streakDisplay = document.getElementById('streak-display');
+    const streakNumber = document.getElementById('streak-number');
+    const streakText = document.getElementById('streak-text');
+    
+    if (streakDisplay && streakNumber && streakText) {
+        streakNumber.textContent = streak;
+        streakDisplay.style.display = 'inline-flex';
+        
+        if (streak === 1) {
+            streakText.textContent = 'day streak! Start building!';
+        } else if (streak < 7) {
+            streakText.textContent = 'day streak! Keep going!';
+        } else if (streak < 30) {
+            streakText.textContent = 'day streak! Amazing!';
+        } else {
+            streakText.textContent = 'day streak! Legendary!';
+        }
+    }
+}
+
+function showStreakCelebration(streak) {
+    if (typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#f59e0b', '#ef4444', '#10b981']
+        });
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 50,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#f59e0b', '#ef4444']
+            });
+        }, 150);
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 50,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#10b981', '#f59e0b']
+            });
+        }, 300);
+    }
+    
+    setTimeout(() => {
+        let message = '';
+        if (streak === 7) {
+            message = '🎉 Amazing! 7-day streak! You\'re building a habit!';
+        } else if (streak === 30) {
+            message = '🏆 Incredible! 30-day streak! You\'re a learning machine!';
+        } else if (streak === 100) {
+            message = '👑 LEGENDARY! 100-day streak! You\'re unstoppable!';
+        } else if (streak % 10 === 0) {
+            message = `🔥 Awesome! ${streak}-day streak! Keep the fire burning!`;
+        }
+        
+        if (message) {
+            alert(message);
+        }
+    }, 500);
+}
 
 const SHEET_ID = '17lLI7iWHeidBK7yyhG8rugXfNj8sxCq-zviBIMzTu2E';
 const SHEET_NAME = 'sheet1';
@@ -129,7 +228,7 @@ const categoryEmojis = {
 window.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    checkForUpdates(); // Check for updates on app load
+    checkForUpdates();
     
     loadAllSochs();
     
@@ -207,7 +306,6 @@ async function loadAllSochs() {
         }));
         
         console.log('Loaded sochs:', allSochs.length);
-        console.log('Sample bonus tip:', allSochs[0]?.bonusTip);
         
         const savedName = localStorage.getItem('userName');
         const savedCategories = localStorage.getItem('selectedCategories');
@@ -252,9 +350,22 @@ function proceedToCategories() {
 
 function showCategoryScreen() {
     const greeting = document.getElementById('categoryGreeting');
+    
+    const isMobile = window.innerWidth < 640;
+    
     if (userName) {
-        greeting.textContent = `Great, ${userName}! Now pick your interests`;
+        if (isMobile) {
+            greeting.textContent = `Great, ${userName}! Pick your interests`;
+        } else {
+            greeting.textContent = `Great, ${userName}! Now pick your interests`;
+        }
+    } else {
+        greeting.textContent = isMobile ? `Pick your interests` : `Great! Now pick your interests`;
     }
+    
+    greeting.style.display = 'block';
+    greeting.style.visibility = 'visible';
+    
     document.getElementById('categoryScreen').classList.add('show');
 }
 
@@ -356,6 +467,8 @@ function filterSochsByCategories() {
 }
 
 function showMainApp() {
+    updateStreak();
+    
     document.getElementById('mainApp').style.display = 'block';
     
     const greeting = document.getElementById('userGreeting');
