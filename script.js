@@ -1,5 +1,5 @@
 // App Version Control
-const APP_VERSION = '1.4';
+const APP_VERSION = '1.5';
 const TOAST_DISMISS_DURATION = 24 * 60 * 60 * 1000;
 
 function checkForUpdates() {
@@ -178,6 +178,92 @@ function showStreakCelebration(streak) {
             message = '👑 LEGENDARY! 100-day streak! You\'re unstoppable!';
         } else if (streak % 10 === 0) {
             message = `🔥 Awesome! ${streak}-day streak! Keep the fire burning!`;
+        }
+        
+        if (message) {
+            alert(message);
+        }
+    }, 500);
+}
+
+// Progress Tracking System
+function updateProgress() {
+    const readSochs = JSON.parse(localStorage.getItem('readSochs') || '[]');
+    const totalSochs = allSochs.length;
+    const readCount = readSochs.length;
+    const percentage = Math.round((readCount / totalSochs) * 100);
+    
+    displayProgress(readCount, totalSochs, percentage);
+}
+
+function displayProgress(readCount, totalSochs, percentage) {
+    const progressDisplay = document.getElementById('progress-display');
+    const progressPercentage = document.getElementById('progress-percentage');
+    const progressCount = document.getElementById('progress-count');
+    const progressCircle = document.getElementById('progress-ring-circle');
+    
+    if (progressDisplay && progressPercentage && progressCount && progressCircle) {
+        progressDisplay.style.display = 'inline-flex';
+        
+        progressPercentage.textContent = `${percentage}%`;
+        progressCount.textContent = `${readCount} of ${totalSochs}`;
+        
+        const circumference = 2 * Math.PI * 32;
+        const offset = circumference - (percentage / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        
+        if (percentage < 25) {
+            progressCircle.style.stroke = '#ef4444';
+        } else if (percentage < 50) {
+            progressCircle.style.stroke = '#f59e0b';
+        } else if (percentage < 75) {
+            progressCircle.style.stroke = '#fbbf24';
+        } else {
+            progressCircle.style.stroke = '#10b981';
+        }
+    }
+}
+
+function markSochAsRead(sochId) {
+    const readSochs = JSON.parse(localStorage.getItem('readSochs') || '[]');
+    
+    if (!readSochs.includes(sochId)) {
+        readSochs.push(sochId);
+        localStorage.setItem('readSochs', JSON.stringify(readSochs));
+        
+        updateProgress();
+        
+        const readCount = readSochs.length;
+        if (readCount === 10 || readCount === 25 || readCount === 50 || readCount === 75 || readCount === 100) {
+            showProgressCelebration(readCount, allSochs.length);
+        }
+    }
+}
+
+function showProgressCelebration(readCount, totalCount) {
+    if (typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#fbbf24', '#f59e0b', '#10b981']
+        });
+    }
+    
+    setTimeout(() => {
+        let message = '';
+        const percentage = Math.round((readCount / totalCount) * 100);
+        
+        if (readCount === 10) {
+            message = `🎉 Great start! You've read ${readCount} case studies (${percentage}%)!`;
+        } else if (readCount === 25) {
+            message = `🚀 Amazing! Quarter way there! ${readCount} case studies completed (${percentage}%)!`;
+        } else if (readCount === 50) {
+            message = `🏆 Halfway done! You're unstoppable! ${readCount} case studies (${percentage}%)!`;
+        } else if (readCount === 75) {
+            message = `⭐ Almost there! ${readCount} case studies completed (${percentage}%)!`;
+        } else if (readCount === 100) {
+            message = `👑 CHAMPION! You've completed ALL ${readCount} case studies! You're a learning legend!`;
         }
         
         if (message) {
@@ -468,6 +554,7 @@ function filterSochsByCategories() {
 
 function showMainApp() {
     updateStreak();
+    updateProgress();
     
     document.getElementById('mainApp').style.display = 'block';
     
@@ -527,6 +614,8 @@ function displaySoch() {
     
     document.getElementById('feedback').className = 'feedback';
     document.getElementById('feedback').innerHTML = '';
+    
+    markSochAsRead(currentSoch.id);
 }
 
 function checkAnswer(selected, element) {
